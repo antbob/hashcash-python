@@ -121,13 +121,14 @@ def hashcash_mint(resource, nbits=None, stime=None):
         date_time = datetime.datetime.today().strftime('%y%m%d%H%M%S')
     else:
         # Valid date formats are: YYMMDD, YYMMDDhhmm, YYMMDDhhmmss
-        try:
+        if len(stime) == 12:
             datetime.datetime.strptime(stime, '%y%m%d%H%M%S')
-        except ValueError:
-            try:
-                datetime.datetime.strptime(stime, '%y%m%d%H%M')
-            except ValueError:
-                datetime.datetime.strptime(stime, '%y%m%d')
+        elif len(stime) == 10:
+            datetime.datetime.strptime(stime, '%y%m%d%H%M')
+        elif len(stime) == 6:
+            datetime.datetime.strptime(stime, '%y%m%d')
+        else:
+            raise ValueError
         date_time = stime
 
     # Stamp format is ver:bits:date:resource:[ext]:rand:counter
@@ -287,13 +288,14 @@ def _parse_time_stamp(time_stamp):
     """
 
     # Valid date formats are: YYMMDD, YYMMDDhhmm, YYMMDDhhmmss
-    try:
+    if len(time_stamp) == 12:
         epoch_time = time.mktime(time.strptime(time_stamp, '%y%m%d%H%M%S'))
-    except ValueError:
-        try:
-            epoch_time = time.mktime(time.strptime(time_stamp, '%y%m%d%H%M'))
-        except ValueError:
-            epoch_time = time.mktime(time.strptime(time_stamp, '%y%m%d'))
+    elif len(time_stamp) == 10:
+        epoch_time = time.mktime(time.strptime(time_stamp, '%y%m%d%H%M'))
+    elif len(time_stamp) == 6:
+        epoch_time = time.mktime(time.strptime(time_stamp, '%y%m%d'))
+    else:
+        raise ValueError
 
     return epoch_time
 
